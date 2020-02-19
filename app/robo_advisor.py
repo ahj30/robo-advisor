@@ -67,7 +67,6 @@ recent_low = min(low_prices)
 #latest_close = parsed_response["Time Series (Daily)"]["2020-02-18"]["4. close"]
 
 
-
 #
 #INFO OUTPUTS
 #
@@ -100,16 +99,26 @@ print(f"RECENT HIGH: {to_usd(float(recent_high))}")
 print(f"RECENT LOW: {to_usd(float(recent_low))}")
 print("-------------------------")
 
-#if float(latest_close) < float((.95*recent_high)) and latest_close > float((.75*recent_high)):
-    #print("RECOMMENDATION: HOLD")
-    #print("RECOMMENDATION REASON: STOCK CURRENTLY TRADING WITHIN A CONSOLIDATION RANGE")
 
+###recommendations:
+#### if the stocks latest close is within 5% of recent high, sell. If stock is within 5% of recent low, buy.
+#### otherwise hold or take no position
+
+### CHECK IF STOCK IS IN A RANGE
+if float(latest_close) > .95*float(recent_high): 
+    print("RECOMMENDATION: SELL")
+    print("RECOMMENDATION REASON: STOCK IS EXPENSIVE")
+elif float(latest_close) < 1.05*float(recent_low):
+    print("RECOMMENDATION: BUY")
+    print("RECOMMENDATION REASON: STOCK IS CHEAP")
+else:
+    print("RECOMMENDATION: HOLD OR TAKE NO POSITION")
+    print("RECCOMENDATION: STOCK IS TRADING WITHIN A CONSOLIDATION RANGE")
     
 
-print("RECOMMENDATION: BUY!")
-print("RECOMMENDATION REASON: TODO")
 print("-------------------------")
 print(f"WRITING DATA TO CSV... {csv_file_path}")
+print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")
 
