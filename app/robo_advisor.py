@@ -1,7 +1,9 @@
 # app/robo_advisor.py
 
 import requests
+
 import json
+import csv
 import os
 import datetime
 from dotenv import load_dotenv
@@ -44,13 +46,23 @@ if "Error Message" in response.text:
 parsed_response = json.loads(response.text)
 
 last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
+
 tsd = parsed_response["Time Series (Daily)"]
 dates = list(tsd.keys())
 latest_day = dates[0]
 latest_close = tsd[latest_day]["4. close"]
 
+high_prices = []
+low_prices = []
 
+for date in dates:
+    high_price = tsd[date]["2. high"]
+    low_price = tsd[date]["3. low"]
+    high_prices.append(float(high_price))
+    low_prices.append(float(low_price))
 
+recent_high = max(high_prices)
+recent_low = min(low_prices)
 
 #latest_close = parsed_response["Time Series (Daily)"]["2020-02-18"]["4. close"]
 
@@ -59,6 +71,15 @@ latest_close = tsd[latest_day]["4. close"]
 #
 #INFO OUTPUTS
 #
+csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
+
+with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writing"
+    writer.writeheader() # uses fieldnames set above
+    writer.writerow({"city": "New York", "name": "Yankees"})
+    writer.writerow({"city": "New York", "name": "Mets"})
+    writer.writerow({"city": "Boston", "name": "Red Sox"})
+    writer.writerow({"city": "New Haven", "name": "Ravens"})
 
 print("-------------------------")
 print(f"SELECTED SYMBOL: {symbol}")
@@ -66,14 +87,22 @@ print("-------------------------")
 print("REQUESTING STOCK MARKET DATA...")
 print("REQUEST AT: " + now.strftime("%Y-%m-%d %I:%M %p"))
 print("-------------------------")
-print("LATEST DAY: " + last_refreshed)
-#print(f"LATEST DAY: {last_refreshed}")
+print(f"LATEST DAY: {last_refreshed}")
 print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
-print("RECENT HIGH: $101,000.00")
-print("RECENT LOW: $99,000.00")
+print(f"RECENT HIGH: {to_usd(float(recent_high))}")
+print(f"RECENT LOW: {to_usd(float(recent_low))}")
 print("-------------------------")
+
+#if float(latest_close) < float((.95*recent_high)) and latest_close > float((.75*recent_high)):
+    #print("RECOMMENDATION: HOLD")
+    #print("RECOMMENDATION REASON: STOCK CURRENTLY TRADING WITHIN A CONSOLIDATION RANGE")
+
+    
+
 print("RECOMMENDATION: BUY!")
 print("RECOMMENDATION REASON: TODO")
 print("-------------------------")
+print(f"WRITING DATA TO CSV... {csv_file_path}")
 print("HAPPY INVESTING!")
 print("-------------------------")
+
