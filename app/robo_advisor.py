@@ -16,13 +16,14 @@ def to_usd(my_price):
     """
     return f"${my_price:,.2f}" #> $12,000.71
 
+now = datetime.datetime.now()
 
 
 #
 #INFO INPUTS
 API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default="OOPS")
 
-symbol = input("Please enter a stock symbol: ")
+symbol = input("PLEASE ENTER A STOCK SYMBOL: ")
 symbol = str(symbol.upper())
 
 
@@ -43,15 +44,16 @@ if "Error Message" in response.text:
 parsed_response = json.loads(response.text)
 
 last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
-#if last_refreshed = parsed_response["Time Series (Daily)"][0]
-#    latest_close = parsed_response["Time Series (Daily)"][last_refreshed]["4. close"]
-#recent_low = 
-print(parsed_response)["Time Series (Daily)"][0]
-print(latest_close)
-#print(parsed_response)
+tsd = parsed_response["Time Series (Daily)"]
+dates = list(tsd.keys())
+latest_day = dates[0]
+latest_close = tsd[latest_day]["4. close"]
 
 
-#breakpoint()
+
+
+#latest_close = parsed_response["Time Series (Daily)"]["2020-02-18"]["4. close"]
+
 
 
 #
@@ -59,14 +61,14 @@ print(latest_close)
 #
 
 print("-------------------------")
-print("SELECTED SYMBOL: XYZ")
+print(f"SELECTED SYMBOL: {symbol}")
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA...")
-print("REQUEST AT: 2018-02-20 02:00pm")
+print("REQUEST AT: " + now.strftime("%Y-%m-%d %I:%M %p"))
 print("-------------------------")
 print("LATEST DAY: " + last_refreshed)
 #print(f"LATEST DAY: {last_refreshed}")
-print(f"LATEST CLOSE: {latest_close}")
+print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
 print("RECENT HIGH: $101,000.00")
 print("RECENT LOW: $99,000.00")
 print("-------------------------")
