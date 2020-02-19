@@ -29,8 +29,11 @@ symbol = input("PLEASE ENTER A STOCK SYMBOL: ")
 symbol = str(symbol.upper())
 
 
-request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"  
+request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
+weekly_request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol={symbol}&apikey={API_KEY}"  
 response = requests.get(request_url)
+weekly_response = requests.get(weekly_request_url)
+
 #print(type(response))
 #print(response.status_code)
 #print(response.text)
@@ -44,16 +47,30 @@ if "Error Message" in response.text:
 
 
 parsed_response = json.loads(response.text)
+weekly_parsed_response = json.loads(weekly_response.text)
 
 last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
 
+tsdw = weekly_parsed_response["Weekly Time Series"]
 tsd = parsed_response["Time Series (Daily)"]
+weekly_dates = list(tsdw.keys())
+
 dates = list(tsd.keys())
 latest_day = dates[0]
 latest_close = tsd[latest_day]["4. close"]
 
 high_prices = []
 low_prices = []
+year_highprices = []
+year_lowprices = []
+
+
+
+for wdate in weekly_dates[0:51]:
+    year_high = tsdw[wdate]["2. high"]
+    year_low = tsdw[wdate]["3. low"]
+    year_highprices.append(float(year_high))
+    year_lowprices.append(float(year_low))
 
 for date in dates:
     high_price = tsd[date]["2. high"]
@@ -61,8 +78,13 @@ for date in dates:
     high_prices.append(float(high_price))
     low_prices.append(float(low_price))
 
+fiftytwo_high = max(year_highprices)
+fiftytwo_low = min(year_lowprices)
+
 recent_high = max(high_prices)
 recent_low = min(low_prices)
+
+
 
 #latest_close = parsed_response["Time Series (Daily)"]["2020-02-18"]["4. close"]
 
@@ -73,7 +95,7 @@ recent_low = min(low_prices)
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
 csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
 
-with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writing"
+with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the file for writing"
     writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
     writer.writeheader() # uses fieldnames set above
     for date in dates:
@@ -97,6 +119,8 @@ print(f"LATEST DAY: {last_refreshed}")
 print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
 print(f"RECENT HIGH: {to_usd(float(recent_high))}")
 print(f"RECENT LOW: {to_usd(float(recent_low))}")
+print(f"52 WEEK HIGH: {to_usd(float(fiftytwo_high))}")
+print(f"52 WEEK LOW: {to_usd(float(fiftytwo_low))}")
 print("-------------------------")
 
 
@@ -117,7 +141,7 @@ else:
     
 
 print("-------------------------")
-print(f"WRITING DATA TO CSV... {csv_file_path}")
+print(f"WRITING DATA TO CSV... {os.path.abspath(csv_file_path)}")
 print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")
