@@ -29,6 +29,7 @@ python app/robo_advisor.py
 ```
 
 ##### Example Output
+```sh
 (stocks-env)
 "USER NAME" ~/Desktop/shopping-cart (master)
 $ python app/robo_advisor.py
@@ -53,3 +54,4 @@ WRITING PAST 100 DAY TRADING DATA TO CSV... C:\Users\Andrew\Desktop\robo-advisor
 -------------------------
 HAPPY INVESTING!
 -------------------------
+```
