@@ -7,6 +7,8 @@ import csv
 import os
 import datetime
 from dotenv import load_dotenv
+#from matplotlib import pyplot as plt
+
 
 load_dotenv()
 
@@ -33,7 +35,6 @@ request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&sym
 weekly_request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol={symbol}&apikey={API_KEY}"  
 response = requests.get(request_url)
 weekly_response = requests.get(weekly_request_url)
-
 #print(type(response))
 #print(response.status_code)
 #print(response.text)
@@ -131,13 +132,13 @@ print("-------------------------")
 ### CHECK IF STOCK IS IN A RANGE
 if float(latest_close) > .95*float(recent_high): 
     print("RECOMMENDATION: SELL")
-    print("RECOMMENDATION REASON: STOCK IS EXPENSIVE")
+    print("RECOMMENDATION REASON: STOCK IS WITHIN 5% OF ITS MOST RECENT HIGH")
 elif float(latest_close) < 1.05*float(recent_low):
     print("RECOMMENDATION: BUY")
-    print("RECOMMENDATION REASON: STOCK IS CHEAP")
+    print("RECOMMENDATION REASON: STOCK IS WITHIN 5% OF ITS MOST RECENT LOW")
 else:
-    print("RECOMMENDATION: HOLD OR TAKE NO POSITION")
-    print("RECCOMENDATION: STOCK IS TRADING WITHIN A CONSOLIDATION RANGE")
+    print("RECOMMENDATION: HOLD")
+    print("RECCOMENDATION REASON: STOCK IS TRADING WITHIN A CONSOLIDATION RANGE")
     
 
 print("-------------------------")
@@ -145,4 +146,26 @@ print(f"WRITING PAST 100 DAY TRADING DATA TO CSV... {os.path.abspath(csv_file_pa
 print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")
+
+
+#print("WOULD YOU LIKE TO SEE THE STOCK GRAPH FOR THE PAST 100 TRADING DAYS?")
+
+#while True:
+#    chart_choice = input(str("PLEASE ENTER 'YES' OR 'NO': "))
+#    chart_choice = chart_choice.upper()
+#
+#
+#    if chart_choice == "YES":
+#        print("GENERATING CHART")
+#        break
+#    elif chart_choice == "NO":
+#        print("HAPPY INVESTING!")
+#        print("-------------------------")
+#        break
+#    else:
+#        print("INVALID ENTRY")
+#
+#print("END")
+#
+#
 
