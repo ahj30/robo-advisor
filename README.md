@@ -9,7 +9,7 @@ After cloning the repository, navigate there from the command line:
 ```sh
 cd ~/"Your download location"/robo-advisor
 ```
-### Environment Setup and Security Setup
+## Environment Setup and Security Setup
 
 Create and activate a new Anaconda virtual environment:
 ```sh
@@ -29,14 +29,14 @@ Create a ".env" file and place the following inside:
 ALPHAVANTAGE_API_KEY="your API key"
 ```
 
-#### Usage 
+## Usage 
 To run the program:
 
 ```sh
 python app/robo_advisor.py
 ```
 
-##### Example Output
+## Example Output
 ```sh
 (stocks-env)
 "USER NAME" ~/Desktop/shopping-cart (master)
