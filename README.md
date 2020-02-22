@@ -9,7 +9,8 @@ After cloning the repository, navigate there from the command line:
 ```sh
 cd ~/"Your download location"/robo-advisor
 ```
-### Environment Setup
+### Environment Setup and Security Setup
+
 Create and activate a new Anaconda virtual environment:
 ```sh
 conda create -n stocks-env python=3.7 # (first time only)
@@ -19,6 +20,13 @@ From within the virtual environment, install the required packages specified in 
 
 ```sh
 pip install -r requirements.txt
+```
+The program will need an API Key to issue requests to the [AlphaVantage API](https://www.alphavantage.co). But the program's source code should absolutely not include the secret API Key value. Instead, you should set an environment variable called `ALPHAVANTAGE_API_KEY`, and your program should read the API Key from this environment variable at run-time.
+
+Create a ".env" file and place the following inside:
+
+```
+ALPHAVANTAGE_API_KEY="your API key"
 ```
 
 #### Usage 
