@@ -10,8 +10,6 @@ import os
 import datetime
 from dotenv import load_dotenv
 
-
-
 load_dotenv()
 
 ##check for digits in stock symbol
@@ -30,10 +28,7 @@ def to_usd(my_price):
 
 now = datetime.datetime.now()
 while True:
-
     symbol = input("PLEASE ENTER A STOCK SYMBOL: ")
-
-
     if hasNumbers(symbol) == True:
         print("STOCK SYMBOL CANNOT CONTAIN DIGITS")
     else:
@@ -42,10 +37,8 @@ while True:
 #
 #INFO INPUTS
 API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default="OOPS")
-
 #symbol = input("PLEASE ENTER A STOCK SYMBOL: ")
 symbol = str(symbol.upper())
-
 
 request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
 weekly_request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol={symbol}&apikey={API_KEY}"  
@@ -53,7 +46,6 @@ response = requests.get(request_url)
 weekly_response = requests.get(weekly_request_url)
 
 # handle response errors:
-
 if "Error Message" in weekly_response.text:
     print("SORRY, SYMBOL NOT FOUND. PLEASE RUN THE PROGRAM AGAIN WITH A VALID SYMBOL.")
     exit()
@@ -62,7 +54,6 @@ if  "Thank you for using Alpha Vantage!" in weekly_response.text:
     exit()
 
 #parse the stock data
-
 parsed_response = json.loads(response.text)
 weekly_parsed_response = json.loads(weekly_response.text)
 
@@ -82,7 +73,6 @@ year_highprices = []
 year_lowprices = []
 
 #calculate high and low prices
-
 for wdate in weekly_dates[0:51]:
     year_high = tsdw[wdate]["2. high"]
     year_low = tsdw[wdate]["3. low"]
@@ -101,15 +91,8 @@ fiftytwo_low = min(year_lowprices)
 recent_high = max(high_prices)
 recent_low = min(low_prices)
 
-
-
-
-
-#
 #INFO OUTPUTS
-#
 #writing to CSV
-
 ###ALL HISTORICAL DATA
 
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
@@ -148,7 +131,6 @@ with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the fil
 #            "volume": daily_prices["5. volume"]
 #        })
 
-
 #output
 
 print("-------------------------")
@@ -164,7 +146,6 @@ print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
 print(f"52 WEEK HIGH: {to_usd(float(fiftytwo_high))}")
 print(f"52 WEEK LOW: {to_usd(float(fiftytwo_low))}")
 print("-------------------------")
-
 
 ###recommendations:
 #### if the stocks latest close is within 5% of 52wk high, sell. If stock is within 5% of 52 wk low, buy.
@@ -187,11 +168,8 @@ print(f"WRITING HISTORICAL TRADING DATA TO CSV... {os.path.abspath(csv_file_path
 print("-------------------------")
 
 #displays chart
-
 #from https://plot.ly/python/plot-data-from-csv/
-
 while True:
-
     chart_choice = input("WOULD YOU LIKE TO SEE A STOCK CHART WITH HISTORICAL PRICES? 'YES' OR 'NO': ")
     chart_choice = chart_choice.upper()
 
@@ -217,13 +195,7 @@ while True:
     else:
         print("PLEASE ENTER EITHER 'YES' OR 'NO'" )
 
-
-
-
-
-
 print("HAPPY INVESTING!")
 print("-------------------------")
 
-
-
+#end
