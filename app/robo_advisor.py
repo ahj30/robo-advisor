@@ -1,6 +1,8 @@
 # app/robo_advisor.py
 
 import requests
+import pandas as pd
+import plotly.graph_objects as go
 
 import json
 import csv
@@ -12,6 +14,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+##check for digits in stock symbol
+#### from https://stackoverflow.com/questions/19859282/check-if-a-string-contains-a-number
+
+def hasNumbers(inputString): 
+    return any(char.isdigit() for char in inputString)
+
 def to_usd(my_price):
     """
     Converts a numeric value to usd-formatted string, for printing and display purposes. 
@@ -21,13 +29,21 @@ def to_usd(my_price):
     return f"${my_price:,.2f}" #> $12,000.71
 
 now = datetime.datetime.now()
+while True:
 
+    symbol = input("PLEASE ENTER A STOCK SYMBOL: ")
+
+
+    if hasNumbers(symbol) == True:
+        print("STOCK SYMBOL CANNOT CONTAIN DIGITS")
+    else:
+        break
 
 #
 #INFO INPUTS
 API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default="OOPS")
 
-symbol = input("PLEASE ENTER A STOCK SYMBOL: ")
+#symbol = input("PLEASE ENTER A STOCK SYMBOL: ")
 symbol = str(symbol.upper())
 
 
@@ -36,7 +52,7 @@ weekly_request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_WE
 response = requests.get(request_url)
 weekly_response = requests.get(weekly_request_url)
 
-# handle response erors:
+# handle response errors:
 
 if "Error Message" in weekly_response.text:
     print("SORRY, SYMBOL NOT FOUND. PLEASE RUN THE PROGRAM AGAIN WITH A VALID SYMBOL.")
@@ -93,22 +109,44 @@ recent_low = min(low_prices)
 #INFO OUTPUTS
 #
 #writing to CSV
+
+###ALL HISTORICAL DATA
+
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
 csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
 
 with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the file for writing"
     writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
     writer.writeheader() # uses fieldnames set above
-    for date in dates:
-        daily_prices = tsd[date]
+    for wdate in weekly_dates:
+        weekly_prices = tsdw[wdate]
         writer.writerow({
-            "timestamp": date,
-            "open": daily_prices["1. open"], 
-            "high": daily_prices["2. high"],
-            "low": daily_prices["3. low"],
-            "close": daily_prices["4. close"],
-            "volume": daily_prices["5. volume"]
+            "timestamp": wdate,
+            "open": weekly_prices["1. open"], 
+            "high": weekly_prices["2. high"],
+            "low": weekly_prices["3. low"],
+            "close": weekly_prices["4. close"],
+            "volume": weekly_prices["5. volume"]
         })
+
+###ONLY IF YOU WANT TO DISPLAY PAST 100 TRADING DAY DATA TO CSV
+
+#csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+#csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
+#
+#with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the file for writing"
+#    writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
+#    writer.writeheader() # uses fieldnames set above
+#    for date in dates:
+#        daily_prices = tsd[date]
+#        writer.writerow({
+#            "timestamp": date,
+#            "open": daily_prices["1. open"], 
+#            "high": daily_prices["2. high"],
+#            "low": daily_prices["3. low"],
+#            "close": daily_prices["4. close"],
+#            "volume": daily_prices["5. volume"]
+#        })
 
 
 #output
@@ -145,8 +183,45 @@ else:
     
 
 print("-------------------------")
-print(f"WRITING PAST 100 DAY TRADING DATA TO CSV... {os.path.abspath(csv_file_path)}")
+print(f"WRITING HISTORICAL TRADING DATA TO CSV... {os.path.abspath(csv_file_path)}")
 print("-------------------------")
+
+#displays chart
+
+#from https://plot.ly/python/plot-data-from-csv/
+
+while True:
+
+    chart_choice = input("WOULD YOU LIKE TO SEE A STOCK CHART WITH HISTORICAL PRICES? 'YES' OR 'NO': ")
+    chart_choice = chart_choice.upper()
+
+    if chart_choice == "YES":
+
+        df = pd.read_csv(csv_file_path)
+
+        fig = go.Figure(go.Scatter(x = df['timestamp'], y = df['close'],
+                        name='Share Prices (in USD)'))
+
+        fig.update_layout(title= symbol + ' Prices over time',
+                        plot_bgcolor='rgb(230, 230 ,230)',
+                        showlegend=True)
+
+        fig.show()
+        print("LOADING CHART...")
+        print("-------------------------")
+        break
+
+    elif chart_choice == "NO":
+        print("-------------------------")
+        break
+    else:
+        print("PLEASE ENTER EITHER 'YES' OR 'NO'" )
+
+
+
+
+
+
 print("HAPPY INVESTING!")
 print("-------------------------")
 
