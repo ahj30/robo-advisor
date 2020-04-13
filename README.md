@@ -65,7 +65,7 @@ HAPPY INVESTING!
 ```
 
 ## Testing
-Make sure stocks-env is active
+Make sure stocks-env is active.
 To test:
 ```sh
 pytest
