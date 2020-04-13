@@ -3,5 +3,5 @@
 # ignore secret environment variable values in the ".env" file:
 .env
 .pytest_cache/
-__pycache__/
+
 

@@ -13,12 +13,17 @@ from dotenv import load_dotenv
 load_dotenv()
 ##check for digits in stock symbol
 def high_low():
+    """
+    calculates the highs and lows from the given time series
+    """
     for date in dates:
         high_price = tsd[date]["2. high"]
         low_price = tsd[date]["3. low"]
         high_prices.append(float(high_price))
         low_prices.append(float(low_price))    
 def display_chart():
+    """displays chart given the csv data
+    """
             df = pd.read_csv(csv_file_path)
     
             fig = go.Figure(go.Scatter(x = df['timestamp'], y = df['close'],
@@ -32,6 +37,9 @@ def display_chart():
             print("LOADING CHART...")
             line_seperator()    
 def response_errors():
+    """ 
+    displays error messages given a certain stock symbol
+    """
     if "Error Message" in response.text:
         print("SORRY, SYMBOL NOT FOUND. PLEASE RUN THE PROGRAM AGAIN WITH A VALID SYMBOL.")
         exit()
@@ -82,8 +90,16 @@ def write_csv(dates, csv_file_path):
             })   
     return True
 def line_seperator():
+    """
+    lines to be printed
+    """
     print("-------------------------")
 def recommendation(close,high,low):
+    """
+    formulas that calculate the stock recommendation
+    Params: close and high and low (all float)- compared to each other to give recommendation.
+    Example: If high is within 5% of close, recommendation to sell will be output.
+    """
     if float(close) > .95*float(high): 
         print("RECOMMENDATION: SELL")
         print("RECOMMENDATION REASON: STOCK IS WITHIN 5% OF ITS RECENT HIGH")
