@@ -63,3 +63,10 @@ WOULD YOU LIKE TO SEE A STOCK CHART WITH HISTORICAL PRICES? 'YES' OR 'NO': NO
 HAPPY INVESTING!
 -------------------------
 ```
+
+## Testing
+Make sure stocks-env is active
+To test:
+```sh
+pytest
+```
