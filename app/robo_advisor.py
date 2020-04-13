@@ -22,20 +22,18 @@ def high_low():
         high_prices.append(float(high_price))
         low_prices.append(float(low_price))    
 def display_chart():
-    """displays chart given the csv data
     """
-            df = pd.read_csv(csv_file_path)
-    
-            fig = go.Figure(go.Scatter(x = df['timestamp'], y = df['close'],
-                            name='Share Prices (in USD)'))
-    
-            fig.update_layout(title= symbol + ' Prices over time',
-                            plot_bgcolor='rgb(230, 230 ,230)',
-                            showlegend=True)
-    
-            fig.show()
-            print("LOADING CHART...")
-            line_seperator()    
+    displays chart given the csv data
+    """
+    df = pd.read_csv(csv_file_path)
+    fig = go.Figure(go.Scatter(x = df['timestamp'], y = df['close'],
+                    name='Share Prices (in USD)'))
+    fig.update_layout(title= symbol + ' Prices over time',
+                    plot_bgcolor='rgb(230, 230 ,230)',
+                    showlegend=True)
+    fig.show()
+    print("LOADING CHART...")
+    line_seperator()    
 def response_errors():
     """ 
     displays error messages given a certain stock symbol

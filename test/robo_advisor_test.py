@@ -54,14 +54,7 @@ def test_write_csv():
         os.remove(csv_filepath)
 
     assert os.path.isfile(csv_filepath) == False 
-    # INVOCATION
 
-    #result = write_csv(example_rows, csv_filepath)
-
-    # EXPECTATIONS
-
-    #assert result == True
-    #assert os.path.isfile(csv_filepath) == True   
 
 def test_recommendation():
     close = 100
