@@ -173,6 +173,5 @@ if __name__ == "__main__":
         else:
             print("PLEASE ENTER EITHER 'YES' OR 'NO'" )
     print("HAPPY INVESTING!")
-    line_seperator()
-    
+    line_seperator()   
 #end
